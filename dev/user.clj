@@ -5,7 +5,7 @@
      [clojure.string :as str]
      [com.stuartsierra.component :as component]
      [reloaded.repl :refer [system init start stop go reset clear]]
-     [pedrepl.system :as system]
+     [clik.system :as system]
      ))
 
   (reloaded.repl/set-init!

@@ -1,4 +1,4 @@
-(ns clik.server
+(ns clik.main
   (:gen-class) ; for -main method in uberjar
   (:require [clik.service :as service]))
 

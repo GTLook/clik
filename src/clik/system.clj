@@ -1,5 +1,6 @@
 (ns clik.system
-  (:require [com.stuartsierra.component :as component]))
+  (:require [com.stuartsierra.component :as component]
+            [clik.service :as service]))
 
 (defn initialize
   []
@@ -7,5 +8,5 @@
    :data-source (atom 0)
    :server
    (component/using
-    (service/new-pedestal)
+    (service/server {:port 8080})
     [:data-source])))
