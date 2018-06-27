@@ -3,3 +3,13 @@
 (go)
 (into {} system)
 (reset)
+exit
+(go)
+(reset)
+(go)
+(reset)
+(into {} system)
+(reset)
+(into {}system)
+(reset)
+exit

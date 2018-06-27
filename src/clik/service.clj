@@ -18,19 +18,30 @@
     org.eclipse.jetty.server.Server))
 
 
-    ;;;;; APPLICATION CONSTRUCTORS ;;;;;
+;; APPLICATION CONSTRUCTORS
+
+    (defn create-todo
+      "Creates a new post with passed in title task and team"
+      [team title body]
+      {:team team, :title title, :body body, :lane "todo"})
+
 
     (defn app-routes
       "Constructs a new Ring handler implementing the website application."
       [data-source]
       (routes
         (GET "/" []
-          {:body "Hello world"})
-        (GET "/counter" []
-          {:body (str @data-source)})
-        (POST "/counter" []
-          (let [result (swap! data-source inc)]
-          {:body (str result)}))))
+          {:body (pr-str "Here are the items in the todo list:"
+            (map #(str "\n" %) @data-source))})
+    ;GET all by team name /team/:team-name
+    ;GET all by lane  /team/:lane
+
+        ; (POST "/test" []
+        ;     (let [result (swap! data-source ["is new!"])]
+        ;     {:body (str result)}))
+        (POST "/new" [team title body]
+            (let [result (swap! data-source conj (create-todo title team body))])
+            {:body (str "Created New Task:" (create-todo title team body))})))
 
     (defn- wrap-middleware
       "Wraps the application routes in middleware."
@@ -54,6 +65,7 @@
     (wrap-middleware (app-routes data-source)))
 
 
+;; Webserver Lifecycle
 
 (defrecord WebServer
   [options data-source ^Server server]

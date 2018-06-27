@@ -5,7 +5,7 @@
 (defn initialize
   []
   (component/system-map
-   :data-source (atom 0)
+   :data-source (atom [])
    :server
    (component/using
     (service/server {:port 8080})
