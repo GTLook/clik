@@ -13,3 +13,21 @@ exit
 (into {}system)
 (reset)
 exit
+(go)
+exit
+(go)
+(reset)
+(into {} system)
+(reset)
+(java.unti.UUID/randomUUID)
+(java.util.UUID/randomUUID)
+(reset)
+doc selectkeys
+(doc select-keys)
+(reset)
+(exit)
+(go)
+(reset)
+(g0)
+(go)
+(reset)

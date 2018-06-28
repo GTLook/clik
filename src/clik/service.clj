@@ -2,12 +2,15 @@
   (:require
     [clojure.string :as str]
     [clojure.tools.logging :as log]
+    [clojure.walk :as walk]
+    [cheshire.core :as json]
     (compojure
       [core :refer [ANY GET POST routes]]
       [route :refer [not-found]])
     [com.stuartsierra.component :as component]
     [ring.adapter.jetty :as jetty]
     (ring.middleware
+      [json :refer [wrap-json-response wrap-json-body]]
       [content-type :refer [wrap-content-type]]
       [keyword-params :refer [wrap-keyword-params]]
       [not-modified :refer [wrap-not-modified]]
@@ -15,33 +18,43 @@
       [resource :refer [wrap-resource]])
     [ring.util.response :as ring])
   (:import
-    org.eclipse.jetty.server.Server))
+    org.eclipse.jetty.server.Server
+    java.util.UUID))
 
 
 ;; APPLICATION CONSTRUCTORS
 
     (defn create-todo
       "Creates a new post with passed in title task and team"
-      [team title body]
-      {:team team, :title title, :body body, :lane "todo"})
+      [body]
+      (merge {:lane "todo"}
+      (select-keys (walk/keywordize-keys body) [:team :title :note :lane])))
 
 
     (defn app-routes
       "Constructs a new Ring handler implementing the website application."
       [data-source]
       (routes
+        ;; get all route
         (GET "/" []
-          {:body (pr-str "Here are the items in the todo list:"
-            (map #(str "\n" %) @data-source))})
+          (ring/response (select-keys @data-source [:tasks])))
+        (GET "/help" []
+          (ring/response (select-keys @data-source [:help])))
+
     ;GET all by team name /team/:team-name
     ;GET all by lane  /team/:lane
 
         ; (POST "/test" []
         ;     (let [result (swap! data-source ["is new!"])]
         ;     {:body (str result)}))
-        (POST "/new" [team title body]
-            (let [result (swap! data-source conj (create-todo title team body))])
-            {:body (str "Created New Task:" (create-todo title team body))})))
+        (POST "/new" request
+            ; (prn request)
+            (let [body (:body request)
+                  new-todo (create-todo body)
+                  new-id (UUID/randomUUID)
+                  result (swap! data-source assoc-in [:tasks new-id] new-todo)]
+            (ring/response (assoc new-todo :id new-id))))
+             ))
 
     (defn- wrap-middleware
       "Wraps the application routes in middleware."
@@ -49,13 +62,9 @@
       (-> handler
         wrap-keyword-params
         wrap-params
-        ; (wrap-resource "/public")
-        ; wrap-content-type
-        ; (wrap-cache-control #{"text/css" "text/javascript"} :max-age 300)
-        ; wrap-not-modified
-        ; wrap-exception-handler
+        wrap-json-body
+        wrap-json-response
         ; wrap-request-logger
-        ; wrap-x-forwarded-for
         ))
 
 

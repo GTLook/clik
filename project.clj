@@ -11,6 +11,7 @@
                  [org.slf4j/log4j-over-slf4j "1.7.25"]
                  [ring/ring-core "1.5.0"]
                  [ring/ring-jetty-adapter "1.5.0"]
+                 [ring/ring-json "0.4.0"]
                  [compojure "1.5.1"]
                  [com.stuartsierra/component "0.3.1"]
                  [cheshire "5.8.0"]]
@@ -18,6 +19,7 @@
   :resource-paths ["config", "resources"]
   ;; If you use HTTP/2 or ALPN, use the java-agent to pull in the correct alpn-boot dependency
   ;:java-agents [[org.mortbay.jetty.alpn/jetty-alpn-agent "2.0.5"]]
-  :profiles {
-             :repl {:source-paths ["dev"] :dependencies [[reloaded.repl "0.2.4"]]}}
+  :profiles {:repl {:source-paths ["dev"]
+                    :dependencies [[reloaded.repl "0.2.4"]]
+                    :jvm-opts ["-DLOGBACK_APPENDER=repl"]}}
    )
