@@ -5,7 +5,7 @@
     [clojure.walk :as walk]
     [cheshire.core :as json]
     (compojure
-      [core :refer [ANY GET POST routes]]
+      [core :refer [ANY GET POST PATCH DELETE routes]]
       [route :refer [not-found]])
     [com.stuartsierra.component :as component]
     [ring.adapter.jetty :as jetty]
@@ -28,33 +28,50 @@
       "Creates a new post with passed in title task and team"
       [body]
       (merge {:lane "todo"}
-      (select-keys (walk/keywordize-keys body) [:team :title :note :lane])))
+             (select-keys (walk/keywordize-keys body) [:title :note :lane])))
 
 
     (defn app-routes
       "Constructs a new Ring handler implementing the website application."
       [data-source]
       (routes
-        ;; get all route
+        ;; get all tasks and help texts
         (GET "/" []
-          (ring/response (select-keys @data-source [:tasks])))
+          (ring/response @data-source))
         (GET "/help" []
           (ring/response (select-keys @data-source [:help])))
+        (GET "/tasks" []
+          (ring/response (select-keys @data-source [:tasks])))
 
-    ;GET all by team name /team/:team-name
-    ;GET all by lane  /team/:lane
+        ;; get all tasks for a team
+        (GET "/tasks/:team" request
+          (let [team (get-in request [:route-params :team])
+                tasks (select-keys @data-source [:tasks])]
+          (println (select-keys @data-source [:tasks]))
+          (ring/response (select-keys tasks [team]))))
 
-        ; (POST "/test" []
-        ;     (let [result (swap! data-source ["is new!"])]
-        ;     {:body (str result)}))
-        (POST "/new" request
-            ; (prn request)
+        ;; creates new to-do item
+        (POST "/new/:team" request
             (let [body (:body request)
                   new-todo (create-todo body)
+                  team (get-in request [:route-params :team])
                   new-id (UUID/randomUUID)
-                  result (swap! data-source assoc-in [:tasks new-id] new-todo)]
+                  result (swap! data-source assoc-in [:tasks team new-id] new-todo)]
             (ring/response (assoc new-todo :id new-id))))
-             ))
+
+        ;; modifies a to-do item
+        (PATCH "/tasks/:team/patch/:id" request
+            (let [body (:body request)
+                  team (get-in request [:route-params :team])
+                  id (get-in request [:route-params :id])]
+            (ring/response (swap! data-source assoc-in [:tasks team ]))))
+
+        ;; deletes task item
+        (DELETE "/tasks/:team/delete/:id" request
+            (let [team (get-in request [:route-params :team])
+                  id (get-in request [:route-params :id])]
+            (ring/response (swap! data-source dissoc-in [:tasks team] id))))
+            ))
 
     (defn- wrap-middleware
       "Wraps the application routes in middleware."

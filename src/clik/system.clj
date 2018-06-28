@@ -5,8 +5,11 @@
 (defn initialize
   []
   (component/system-map
-   :data-source (atom {:tasks {}
-                       :help {:teams { :pipes "something to do with a Mushroom Kingdom"
+   :data-source (atom {:tasks { :pipes {}
+                                :sturgeon {}
+                                :stitch {}}
+                       :help {:structure "title='title text' note='details text'"
+                              :teams { :pipes "something to do with a Mushroom Kingdom"
                                        :stugeon "kinda fishy"
                                        :stitch "my favorite movie"}
                               :lanes { :todo "upcoming work"
