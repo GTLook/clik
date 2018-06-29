@@ -38,10 +38,15 @@
         ;; get all tasks and help texts
         (GET "/" []
           (ring/response @data-source))
+
         (GET "/help" []
           (ring/response (get @data-source :help)))
-        (GET "/tasks" []
-          (ring/response (get @data-source :tasks)))
+
+        (GET "/tasks" [team]
+          (let [tasks (cond->> (:tasks @data-source)
+                        team (filter (fn [[id task]] (= team (:team task))))
+                        true (map (fn [[id task]] (assoc task :id id))))]
+          (ring/response tasks)))
 
         ;; get one task by ID
         (GET "/tasks/:id" [id]
