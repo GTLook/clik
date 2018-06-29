@@ -28,7 +28,7 @@
       "Creates a new post with passed in title task and team"
       [body]
       (merge {:lane "todo"}
-             (select-keys (walk/keywordize-keys body) [:title :note :lane])))
+             (select-keys (walk/keywordize-keys body) [:title :note :lane :team])))
 
 
     (defn app-routes
@@ -39,38 +39,37 @@
         (GET "/" []
           (ring/response @data-source))
         (GET "/help" []
-          (ring/response (select-keys @data-source [:help])))
+          (ring/response (get @data-source :help)))
         (GET "/tasks" []
-          (ring/response (select-keys @data-source [:tasks])))
+          (ring/response (get @data-source :tasks)))
 
-        ;; get all tasks for a team
-        (GET "/tasks/:team" request
-          (let [team (get-in request [:route-params :team])
-                tasks (select-keys @data-source [:tasks])]
-          (println (select-keys @data-source [:tasks]))
-          (ring/response (select-keys tasks [team]))))
+        ;; get one task by ID
+        (GET "/tasks/:id" [id]
+            (if-let [task (get-in @data-source [:tasks id])]
+                (ring/response (assoc task :id id))
+                (ring/not-found {:message "task not found"})))
 
-        ;; creates new to-do item
-        (POST "/new/:team" request
+        ;; creates new task item
+        (POST "/tasks" request
             (let [body (:body request)
                   new-todo (create-todo body)
-                  team (get-in request [:route-params :team])
-                  new-id (UUID/randomUUID)
-                  result (swap! data-source assoc-in [:tasks team new-id] new-todo)]
+                  new-id (str (UUID/randomUUID))
+                  result (swap! data-source assoc-in [:tasks new-id] new-todo)]
             (ring/response (assoc new-todo :id new-id))))
 
-        ;; modifies a to-do item
-        (PATCH "/tasks/:team/patch/:id" request
+        ;; modifies a task item
+        (PATCH "/tasks/:id" [id :as request]
             (let [body (:body request)
-                  team (get-in request [:route-params :team])
-                  id (get-in request [:route-params :id])]
-            (ring/response (swap! data-source assoc-in [:tasks team ]))))
+                  old-task (get-in @data-source [:tasks id])
+                  updates (select-keys (walk/keywordize-keys body) [:title :note :lane :team])
+                  new-task (merge old-task updates)]
+            (swap! data-source assoc-in [:tasks id] new-task)
+            (ring/response (assoc new-task :id id))))
 
         ;; deletes task item
-        (DELETE "/tasks/:team/delete/:id" request
-            (let [team (get-in request [:route-params :team])
-                  id (get-in request [:route-params :id])]
-            (ring/response (swap! data-source dissoc-in [:tasks team] id))))
+        (DELETE "/tasks/:id" [id]
+            (swap! data-source update :tasks dissoc id)
+            (ring/response "deleted"))
             ))
 
     (defn- wrap-middleware
