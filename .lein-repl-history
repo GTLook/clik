@@ -34,3 +34,8 @@ doc selectkeys
 (g0)
 (go)
 (reset)
+save
+tmux -help
+exit
+(go)
+exit
