@@ -5,7 +5,7 @@ exports.up = function(knex, Promise) {
     .createTable(TABLE_NAME, (table) => {
       table.increments()
       table.string('user').notNullable().defaultTo('')
-    })
+  })
 }
 
 exports.down = function(knex, Promise) {

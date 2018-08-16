@@ -38,10 +38,9 @@ Run commands for starting and stopping the local webserver
 
 ## Built With
 
-* [Clojure](https://clojure.org/) - The language
-* [Cheshire](https://github.com/dakrone/cheshire) - JSON encoder
-* [Ring](https://github.com/ring-clojure) - HTTP Server 
-
+-   [Clojure](https://clojure.org/) - The language
+-   [Cheshire](https://github.com/dakrone/cheshire) - JSON encoder
+-   [Ring](https://github.com/ring-clojure) - HTTP Server
 
 ## Contributing
 
@@ -49,7 +48,7 @@ Please send ma a message for details on our code of conduct, and the process for
 
 ## Authors
 
-* **Gavin Look** - *Initial work* - [GTLook](https://github.com/GTLook/)
+-   **Gavin Look** - _Initial work_ - [GTLook](https://github.com/GTLook/)
 
 ## License
 
@@ -57,6 +56,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+-   Hat tip to anyone whose code was used
+-   Inspiration
+-   etc
