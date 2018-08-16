@@ -23,7 +23,7 @@ What things you need to install the software and how to install them
 
 ```shell
 * fork and clone this repository
-* run lein repl
+* lein repl
 ```
 
 ### Lein WebServer commands
@@ -44,7 +44,7 @@ Run commands for starting and stopping the local webserver
 
 ## Contributing
 
-Please send ma a message for details on our code of conduct, and the process for submitting pull requests.
+Please send me a message for details on our code of conduct, and the process for submitting pull requests.
 
 ## Authors
 
@@ -52,10 +52,8 @@ Please send ma a message for details on our code of conduct, and the process for
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License
 
 ## Acknowledgments
 
--   Hat tip to anyone whose code was used
--   Inspiration
--   etc
+* Thanks Greg!
